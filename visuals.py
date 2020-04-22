@@ -28,3 +28,8 @@ class Cannon:
         self.sprite_rect.center = (self.xpos, self.ypos)
         from main import win
         win.blit(self.sprite, self.sprite_rect)
+
+def showFps():
+    from main import win, clock
+    fps_overlay = p.font.SysFont("Verdana", 20).render(str(clock.get_fps()), True, p.Color("goldenrod"))
+    win.blit(fps_overlay, (0, 0))

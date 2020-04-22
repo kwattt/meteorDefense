@@ -45,14 +45,14 @@ def main():
 
                 dg = np.degrees(np.arccos((A * A + B * B - C * C)/(2.0 * A * B)))
 
-                #print("%f,%f,%f -> %f"%(A,B,C, dg))
-
-            elif e.type == p.KEYUP:
-                Cannon.ypos+=1.0
+        ## key control
+        pkey = p.key.get_pressed()
+        if pkey[p.K_UP]:
+            Cannon.ypos-=1.0
 
         bg.Draw()
-
         Cannon.Draw(dg)
+        v.showFps()
 
         clock.tick(60) # 30fps
         p.display.flip() # update-screen
