@@ -1,9 +1,12 @@
 import pygame as p 
 
-def backgrounDraw():
-    from main import win
-    bg = p.image.load('vfx/background/space.jpg')
-    win.blit(bg, (0,0))
+class bg():
+    def __init__(self):
+        self.bgg = p.image.load('vfx/background/space.jpg').convert()
+   
+    def Draw(self):
+        from main import win
+        win.blit(self.bgg, (0,0))
 
 class Cannon:
     def __init__(self):

@@ -2,6 +2,7 @@ import pygame as p
 import meteors
 import visuals as v
 import math
+import numpy as np
 
 def mainSetup():
     
@@ -10,34 +11,48 @@ def mainSetup():
     screenSize_x = 400
     screenSize_y = 600
     
-    global win, clock
+    p.init()
+
+    global win, clock, aevents
+    
     win = p.display.set_mode((screenSize_x,screenSize_y))
     clock = p.time.Clock()
 
-
+    p.event.set_allowed([p.QUIT, p.MOUSEBUTTONUP, p.KEYUP])
 
 def main():
     gameExit = False
 
     Cannon = v.Cannon()
-    deg = 0
+    bg = v.bg()
+    dg = 0
 
     while not gameExit:
 
-        
         #Manejo de eventos de pygame.
         for e in p.event.get():
             if e.type == p.QUIT:
                 gameExit = True 
 
             elif e.type == p.MOUSEBUTTONUP:
-                x,y = p.mouse.get_pos()
-                deg = math.degrees(math.atan2(-1*y-Cannon.ypos, x-Cannon.xpos))
-                print(deg+90)
+                mpos = np.array(p.mouse.get_pos())
+                cpos = np.array((Cannon.xpos, Cannon.ypos))
+                bpos = np.array((Cannon.xpos, screenSize_y))
 
-        v.backgrounDraw()
+                A = np.linalg.norm(np.abs(mpos-cpos))
+                B = np.linalg.norm(np.abs(cpos-bpos))
+                C = np.linalg.norm(np.abs(mpos-bpos))
 
-        Cannon.Draw(deg+90)
+                dg = np.degrees(np.arccos((A * A + B * B - C * C)/(2.0 * A * B)))
+
+                #print("%f,%f,%f -> %f"%(A,B,C, dg))
+
+            elif e.type == p.KEYUP:
+                Cannon.ypos+=1.0
+
+        bg.Draw()
+
+        Cannon.Draw(dg)
 
         clock.tick(60) # 30fps
         p.display.flip() # update-screen
