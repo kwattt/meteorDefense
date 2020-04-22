@@ -12,6 +12,6 @@ def main():
     while not done:
         screen.fill((0,0,0))
         p.display.flip() #update-screen
-
+        clock.tick(30) # 30fps
 mainSetup()
 main()
