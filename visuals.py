@@ -2,11 +2,11 @@ import pygame as p
 import numpy as np
 
 class Mountain():
-    def __init__(self,xsize,ysize):
+    def __init__(self, xsize, ysize):
         self.xsize = xsize
         self.ysize = ysize
         self.bg = p.image.load('vfx/sprites/mountain.png')
-        self.cann = p.transform.scale(self.bg, (xsize,150))
+        self.cann = p.transform.scale(self.bg, (xsize, 150))
         self.hitbox = (0, ysize-115 ,xsize, 20)
 
     def Draw(self, win):
@@ -20,12 +20,13 @@ class bg():
         win.blit(self.bgg, (0,0))
 
 class Cannon:
-    def __init__(self, screenSize_x, screenSize_y):
+    def __init__(self, screenSize_y):
         self.xpos = 20
         self.ypos = screenSize_y-50
 
         self.sprite = p.image.load('vfx/sprites/cannon.png')
         self.cann = p.transform.scale(self.sprite, (10, 70))
+        self.sprite_rect = None
 
     def AngleToMouse(self, screenSize_y):
         mpos = np.array(p.mouse.get_pos())
@@ -35,7 +36,7 @@ class Cannon:
         A = np.linalg.norm(np.abs(mpos-cpos))
         B = np.linalg.norm(np.abs(cpos-bpos))
         C = np.linalg.norm(np.abs(mpos-bpos))
-        
+
         return np.degrees(np.arccos((A * A + B * B - C * C)/(2.0 * A * B)))
 
     def Draw(self, win, angle):
@@ -46,6 +47,6 @@ class Cannon:
         win.blit(self.sprite, self.sprite_rect)
 
 def showFps(win, clock):
-    '''DrawFPS'''
-    fps_overlay = p.font.SysFont("Verdana", 15).render(str(clock.get_fps()), True, p.Color("goldenrod"))
+    fps_overlay = \
+        p.font.SysFont("Verdana", 15).render(str(clock.get_fps()), True, p.Color("goldenrod"))
     win.blit(fps_overlay, (0, 0))

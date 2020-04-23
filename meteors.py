@@ -8,17 +8,20 @@ class Meteor:
 
         self.type = typeX
         self.mSize = 0
+        self.damage = 10
 
         if self.type == 0:
             self.mSize = 70
+            self.damage = 10
             self.sprite = p.image.load("vfx/sprites/meteor1.png")
         elif self.type == 1:
+            self.damage = 5
             self.mSize = 45
             self.sprite = p.image.load("vfx/sprites/meteor2.png")
 
         self.vel = vel
         self.size = (self.mSize, self.mSize)
-        self.pos = (np.random.randint(20,xsize-20),0)
+        self.pos = (np.random.randint(20 ,xsize-20), 0)
 
         self.cann = p.transform.scale(self.sprite, self.size)
         self.angle = 0
@@ -35,7 +38,7 @@ class Meteor:
         self.pos = (self.pos[0], self.pos[1]+self.vel)
         self.angle = (self.angle+1*np.sqrt(self.vel*3))%360
 
-    def Draw(self, win, hitbox = False):
+    def Draw(self, win, hitbox=False):
         self.sprite = p.transform.rotate(self.cann, self.angle)
         self.sprite_rect = self.sprite.get_rect()
 
