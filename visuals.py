@@ -1,6 +1,16 @@
 import pygame as p 
 import numpy as np
 
+class Mountain():
+    def __init__(self,xsize,ysize):
+        self.xsize = xsize
+        self.ysize = ysize
+        self.bg = p.image.load('vfx/sprites/mountain.png')
+        self.cann = p.transform.scale(self.bg, (xsize,150))
+
+    def Draw(self, win):
+        win.blit(self.cann, (0, self.ysize-150))
+
 class bg():
     def __init__(self):
         self.bgg = p.image.load('vfx/background/space.jpg').convert()

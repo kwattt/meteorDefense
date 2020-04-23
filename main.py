@@ -30,14 +30,12 @@ def Generate():
     global frameCount,spawnMet
 
     if frameCount == spawnResult:
-        tres = int (np.random.uniform(0.0, spawnDif)*maxFrames) 
-        #print(tres+spawnResult)
-        spawnMet = spawnResult 
-         
+        spawnMet = spawnResult + int (np.random.uniform(0.0, spawnDif)*maxFrames) 
+        print(spawnMet)
     if spawnMet == frameCount:
         frameCount = 0
+        allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
 
-    allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
 
     frameCount += 1
 
@@ -51,7 +49,7 @@ def main():
     spawnMet = 0
     
     # por segundo.
-    spawnRate = 0.4
+    spawnRate = 0.6
     spawnDif = 0.1
 
     spawnResult = int(spawnRate*maxFrames)
@@ -63,6 +61,8 @@ def main():
 
     Cannon = v.Cannon(screenSize_x, screenSize_y)
     bg = v.bg()
+    mt = v.Mountain(screenSize_x, screenSize_y)
+
 
     while not gameExit:
 
@@ -86,6 +86,7 @@ def main():
         ## Mostrar assets generales.        
 
         bg.Draw(win)
+        mt.Draw(win)
         Cannon.Draw(win,dg)
         v.showFps(win,clock)
 

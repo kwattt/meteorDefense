@@ -14,10 +14,9 @@ class Meteor:
         self.pos = (np.random.randint(20,xsize-20),0)
 
         self.sprite = p.image.load("vfx//sprites//meteor1.png")
-        self.cann = p.transform.scale(self.sprite, (20,70))
+        self.cann = p.transform.scale(self.sprite, (70,70))
 
         self.__class__.meteors.add(self)
-        print(Meteor.meteors)
 
     def UpdatePos(self):
         self.pos = (self.pos[0], self.pos[1]+self.vel)
