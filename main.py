@@ -22,16 +22,17 @@ def mainSetup():
 
     p.event.set_allowed([p.QUIT, p.MOUSEBUTTONUP, p.KEYUP])
 
-# GameStatus #
+# GameStatus #spawnMet
 # 0 -> menu
 # 1 -> ingame 0
 
+spawnMet = 0
 def Generate():
     global frameCount,spawnMet
 
     if frameCount == spawnResult:
         spawnMet = spawnResult + int (np.random.uniform(0.0, spawnDif)*maxFrames) 
-#        print(spawnMet)
+
     if spawnMet == frameCount:
         frameCount = 0
         sel = 0
@@ -52,13 +53,11 @@ def main():
 
     allMeteors = []
 
-    global spawnRate, spawnDif, spawnResult, spawnMet
+    global spawnRate, spawnDif, spawnResult
 
-    spawnMet = 0
-    
-    # por segundo.
-    spawnRate = 0.6
-    spawnDif = 0.1
+    # sobre segundo.
+    spawnRate = 0.01
+    spawnDif = 0.00
 
     spawnResult = int(spawnRate*maxFrames)
     gameExit = False
@@ -87,7 +86,6 @@ def main():
         bg.Draw(win)
         mt.Draw(win)
         Cannon.Draw(win,dg)
-        v.showFps(win,clock)
 
         # Generar meteoros. 
         Generate()
@@ -96,8 +94,8 @@ def main():
         for met in m.Meteor.getMeteors():
             met.UpdatePos()
             met.Draw(win, hitbox=True)
+            
             if lMouse[0] > 0:
-                #xinside.
                 mx,my = lMouse
                 x,y = met.pos
                 if mx < x+met.hitbox[2]/2 and mx > x-met.hitbox[2]/2:
@@ -108,14 +106,15 @@ def main():
 
                         #rotat&shoot
                         dg = Cannon.AngleToMouse(screenSize_y)
-
                         continue                        
 
             #coll mountain 
             if met.pos[1]+met.hitbox[3]/2 > mt.hitbox[1]:
                 allMeteors.remove(met)
                 del met
-                    
+
+        v.showFps(win,clock)
+
         clock.tick(maxFrames) # setFrameRate
         p.display.flip() # update-screen
 
