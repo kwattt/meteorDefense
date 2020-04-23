@@ -31,7 +31,7 @@ def Generate():
 
     if frameCount == spawnResult:
         spawnMet = spawnResult + int (np.random.uniform(0.0, spawnDif)*maxFrames) 
-        print(spawnMet)
+#        print(spawnMet)
     if spawnMet == frameCount:
         frameCount = 0
         allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
@@ -66,6 +66,7 @@ def main():
     allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
 
     while not gameExit:
+        lMouse = (0,0)
 
         #Manejo de eventos de pygame.
         for e in p.event.get():
@@ -76,14 +77,8 @@ def main():
             elif e.type == p.MOUSEBUTTONDOWN: # 
                 # if meteorClicked -> Rotate & shoot
                 dg = Cannon.AngleToMouse(screenSize_y)
-
-        ## key control
-        #pkey = p.key.get_pressed()
-        #if pkey[p.K_UP]:
-        #    Cannon.ypos-=1.0
-
-        ## 
-
+                lMouse = p.mouse.get_pos()
+        
         ## Mostrar assets generales.        
 
         bg.Draw(win)
@@ -96,13 +91,20 @@ def main():
 
         # Loop meteoros.
         for met in m.Meteor.getMeteors():
-
-            #draw 
             met.UpdatePos()
-            met.Draw(win, 0)
+            met.Draw(win, 0, 0)
+            if lMouse[0] > 0:
+                #xinside.
+                mx,my = lMouse
+                x,y = met.pos
+                if mx < x+met.hitbox[2]/2 and mx > x-met.hitbox[2]/2:
+                    if my < y+met.hitbox[3]/2 and my > y-met.hitbox[3]/2:
+                        allMeteors.remove(met)
+                        del met
+                        lMouse = (0,0)
+                        continue                        
 
-            #coll test. 
-
+            #coll mountain 
             if met.pos[1]+met.hitbox[3]/2 > mt.hitbox[1]:
                 allMeteors.remove(met)
                 del met

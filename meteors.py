@@ -26,13 +26,19 @@ class Meteor:
         self.hitbox = (self.pos[0]-self.size[0]/2, self.pos[1]-self.size[1]/2  ,mSize-10, mSize-10) 
         self.pos = (self.pos[0], self.pos[1]+self.vel)
 
-    def Draw(self,win,angle):
+    def Draw(self,win,angle, hitbox = False):
         self.sprite = p.transform.rotate(self.cann, angle%360)
         self.sprite_rect = self.sprite.get_rect()
 
         self.sprite_rect.center = self.pos
         win.blit(self.sprite, self.sprite_rect)
-        #p.draw.rect(win,(255,0,0), self.hitbox)
+        if hitbox:
+            p.draw.rect(win,(255,0,0), (self.pos[0]+self.hitbox[2]/2, self.pos[1]-self.hitbox[3]/2, 3, 70))
+            p.draw.rect(win,(255,255,0), (self.pos[0]-self.hitbox[2]/2, self.pos[1]-self.hitbox[3]/2, 3, 70))
+            p.draw.rect(win,(255,255,255), (self.pos[0]-self.hitbox[2]/2, self.pos[1]+self.hitbox[3]/2, 70, 3))
+            p.draw.rect(win,(255,0,255), (self.pos[0]-self.hitbox[2]/2, self.pos[1]-self.hitbox[3]/2, 70, 3))
+
+        #p.draw.rect(win,(255,0,0), (self.pos[0]-self.size[0]/2, self.pos[1]-self.size[1]/2  ,mSize-10, mSize-10) )
 
     @classmethod
     def getMeteors(cls):
