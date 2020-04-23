@@ -63,6 +63,7 @@ def main():
     bg = v.bg()
     mt = v.Mountain(screenSize_x, screenSize_y)
 
+    allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
 
     while not gameExit:
 
@@ -91,14 +92,24 @@ def main():
         v.showFps(win,clock)
 
         # Generar meteoros. 
-        Generate()
+        #Generate()
 
         # Loop meteoros.
         for met in m.Meteor.getMeteors():
 
-            met.UpdatePos()
+            #draw 
+#            met.UpdatePos()
             met.Draw(win, 0)
 
+            #coll test. 
+
+            x,y = met.pos
+            xs,ys = met.size
+            if y-ys < mt.hitbox[1]+mt.hitbox[3] and y + ys/2 > mt.hitbox[1]:
+                if x+xs > mt.hitbox[0] and x-xs < mt.hitbox[0]+mt.hitbox[2]:
+                    allMeteors.remove(met)
+                    del met
+                    
         clock.tick(maxFrames) # setFrameRate
         p.display.flip() # update-screen
 

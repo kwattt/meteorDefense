@@ -7,9 +7,11 @@ class Mountain():
         self.ysize = ysize
         self.bg = p.image.load('vfx/sprites/mountain.png')
         self.cann = p.transform.scale(self.bg, (xsize,150))
+        self.hitbox = (0, ysize-115 ,xsize, 20)
 
     def Draw(self, win):
         win.blit(self.cann, (0, self.ysize-150))
+        #p.draw.rect(win,(255,0,0), self.hitbox)
 
 class bg():
     def __init__(self):

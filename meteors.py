@@ -11,10 +11,12 @@ class Meteor:
         self.vel = vel
         self.sprite = sprite
 
+        self.size = (70,70)
+
         self.pos = (np.random.randint(20,xsize-20),0)
 
         self.sprite = p.image.load("vfx//sprites//meteor1.png")
-        self.cann = p.transform.scale(self.sprite, (70,70))
+        self.cann = p.transform.scale(self.sprite, self.size)
 
         self.__class__.meteors.add(self)
 
