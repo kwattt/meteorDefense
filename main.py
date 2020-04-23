@@ -34,8 +34,7 @@ def Generate():
 #        print(spawnMet)
     if spawnMet == frameCount:
         frameCount = 0
-        allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
-
+        allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.6), 0, screenSize_x))
 
     frameCount += 1
 
@@ -62,9 +61,7 @@ def main():
     Cannon = v.Cannon(screenSize_x, screenSize_y)
     bg = v.bg()
     mt = v.Mountain(screenSize_x, screenSize_y)
-
-    allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
-
+    
     while not gameExit:
         lMouse = (0,0)
 
@@ -92,7 +89,7 @@ def main():
         # Loop meteoros.
         for met in m.Meteor.getMeteors():
             met.UpdatePos()
-            met.Draw(win, 0, 0)
+            met.Draw(win, 0)
             if lMouse[0] > 0:
                 #xinside.
                 mx,my = lMouse
