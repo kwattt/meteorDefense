@@ -14,7 +14,7 @@ def mainSetup():
 
     global win, clock, gameStatus, frameCount, maxFrames
     gameStatus = 0
-    maxFrames = 100
+    maxFrames = 120
     frameCount = 0
 
     win = p.display.set_mode((screenSize_x,screenSize_y))
@@ -34,12 +34,21 @@ def Generate():
 #        print(spawnMet)
     if spawnMet == frameCount:
         frameCount = 0
-        allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.6), 0, screenSize_x))
+        sel = 0
+        bspeed = 0
+        if gameStatus == 1:
+            if np.random.randint(0,3) == 0:
+                sel = 1
+                bspeed = np.random.uniform(-0.2, 0.8)
+            else:
+                sel = 0 
+
+        allMeteors.append(m.Meteor(sel, np.random.uniform(1.0, 2.4-bspeed), screenSize_x))
 
     frameCount += 1
 
 def main():
-    global allMeteors
+    global allMeteors, gameStatus
 
     allMeteors = []
 
@@ -52,16 +61,15 @@ def main():
     spawnDif = 0.1
 
     spawnResult = int(spawnRate*maxFrames)
-
-    gameStatus = 1
     gameExit = False
-
     dg = 0
 
     Cannon = v.Cannon(screenSize_x, screenSize_y)
     bg = v.bg()
     mt = v.Mountain(screenSize_x, screenSize_y)
-    
+
+
+    gameStatus = 1
     while not gameExit:
         lMouse = (0,0)
 
@@ -72,8 +80,6 @@ def main():
                 gameExit = True 
 
             elif e.type == p.MOUSEBUTTONDOWN: # 
-                # if meteorClicked -> Rotate & shoot
-                dg = Cannon.AngleToMouse(screenSize_y)
                 lMouse = p.mouse.get_pos()
         
         ## Mostrar assets generales.        
@@ -89,7 +95,7 @@ def main():
         # Loop meteoros.
         for met in m.Meteor.getMeteors():
             met.UpdatePos()
-            met.Draw(win, 0)
+            met.Draw(win, hitbox=True)
             if lMouse[0] > 0:
                 #xinside.
                 mx,my = lMouse
@@ -99,6 +105,10 @@ def main():
                         allMeteors.remove(met)
                         del met
                         lMouse = (0,0)
+
+                        #rotat&shoot
+                        dg = Cannon.AngleToMouse(screenSize_y)
+
                         continue                        
 
             #coll mountain 

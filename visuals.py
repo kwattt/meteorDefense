@@ -25,7 +25,7 @@ class Cannon:
         self.ypos = screenSize_y-50
 
         self.sprite = p.image.load('vfx/sprites/cannon.png')
-        self.cann = p.transform.scale(self.sprite, (20,70))
+        self.cann = p.transform.scale(self.sprite, (10,70))
 
     def AngleToMouse(self,screenSize_y):
         mpos = np.array(p.mouse.get_pos())
