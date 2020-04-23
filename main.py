@@ -34,27 +34,21 @@ def main():
             if e.type == p.QUIT:
                 gameExit = True 
 
-            elif e.type == p.MOUSEBUTTONUP:
-                mpos = np.array(p.mouse.get_pos())
-                cpos = np.array((Cannon.xpos, Cannon.ypos))
-                bpos = np.array((Cannon.xpos, screenSize_y))
-
-                A = np.linalg.norm(np.abs(mpos-cpos))
-                B = np.linalg.norm(np.abs(cpos-bpos))
-                C = np.linalg.norm(np.abs(mpos-bpos))
-
-                dg = np.degrees(np.arccos((A * A + B * B - C * C)/(2.0 * A * B)))
+            elif e.type == p.MOUSEBUTTONDOWN: # 
+                # if meteorClicked -> Rotate & shoot
+                dg = Cannon.AngleToMouse()
 
         ## key control
-        pkey = p.key.get_pressed()
-        if pkey[p.K_UP]:
-            Cannon.ypos-=1.0
-
+        #pkey = p.key.get_pressed()
+        #if pkey[p.K_UP]:
+        #    Cannon.ypos-=1.0
+        ## Mostrar assets.
+    
         bg.Draw()
         Cannon.Draw(dg)
         v.showFps()
 
-        clock.tick(60) # 30fps
+        clock.tick(60) # setFrameRate
         p.display.flip() # update-screen
 
 mainSetup()
