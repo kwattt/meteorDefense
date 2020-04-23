@@ -3,6 +3,7 @@ import weakref
 
 meteorI = p.image.load("vfx//sprites//meteor1.png")
 
+
 class Meteor:
     meteors = weakref.WeakSet()
 
@@ -11,8 +12,9 @@ class Meteor:
         self.vel = vel
         self.sprite = sprite
         self.pos = (0,0)
-        Meteor.meteors.add(self)
+        self.__class__.meteors.add(self)
 
     @classmethod
     def getMeteors(cls):
-        return list(Meteor.meteors)
+        return cls.meteors
+    

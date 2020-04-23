@@ -1,7 +1,6 @@
 import pygame as p
-import meteors
+import meteors as m
 import visuals as v
-import math
 import numpy as np
 
 def mainSetup():
@@ -16,6 +15,7 @@ def mainSetup():
     global win, clock, gameStatus, frameCount, maxFrames
     gameStatus = 0
     maxFrames = 60
+    frameCount = 0
 
     win = p.display.set_mode((screenSize_x,screenSize_y))
     clock = p.time.Clock()
@@ -26,13 +26,29 @@ def mainSetup():
 # 0 -> menu
 # 1 -> ingame 0
 
+def Generate():
+    global frameCount
+
+    frameCount += 1
+    if frameCount == spawnResult:
+        frameCount = 0
+
 def main():
+    global spawnRate, spawnDif, spawnResult
+
     gameStatus = 1
     gameExit = False
 
-    Cannon = v.Cannon()
+    Cannon = v.Cannon(screenSize_x, screenSize_y)
     bg = v.bg()
     dg = 0
+
+    # segundos.
+    spawnRate = 0.2 
+    # spawnRate dif en ms
+
+    # spawnResult 4 Generate()
+    spawnResult = int(spawnRate*maxFrames)
 
     while not gameExit:
 
@@ -44,7 +60,7 @@ def main():
 
             elif e.type == p.MOUSEBUTTONDOWN: # 
                 # if meteorClicked -> Rotate & shoot
-                dg = Cannon.AngleToMouse()
+                dg = Cannon.AngleToMouse(screenSize_y)
 
         ## key control
         #pkey = p.key.get_pressed()
@@ -53,9 +69,12 @@ def main():
 
         ## Mostrar assets.
             
-        bg.Draw()
-        Cannon.Draw(dg)
-        v.showFps()
+        bg.Draw(win)
+        Cannon.Draw(win,dg)
+        v.showFps(win,clock)
+
+        # Generar meteoros. 
+        Generate()
 
         clock.tick(maxFrames) # setFrameRate
         p.display.flip() # update-screen
