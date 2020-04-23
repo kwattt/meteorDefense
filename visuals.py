@@ -9,14 +9,11 @@ class bg():
 
 class Cannon:
     def __init__(self,screenSize_x, screenSize_y):
-        self.xsize = 20
-        self.ysize = 70
-
         self.xpos = 20
-        self.ypos = screenSize_y-self.ysize-20
+        self.ypos = screenSize_y-50
 
         self.sprite = p.image.load('vfx/sprites/cannon.png')
-        self.cann = p.transform.scale(self.sprite, (self.xsize,self.ysize))
+        self.cann = p.transform.scale(self.sprite, (20,70))
 
     def AngleToMouse(self,screenSize_y):
         mpos = np.array(p.mouse.get_pos())

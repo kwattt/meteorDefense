@@ -14,7 +14,7 @@ def mainSetup():
 
     global win, clock, gameStatus, frameCount, maxFrames
     gameStatus = 0
-    maxFrames = 60
+    maxFrames = 100
     frameCount = 0
 
     win = p.display.set_mode((screenSize_x,screenSize_y))
@@ -27,28 +27,42 @@ def mainSetup():
 # 1 -> ingame 0
 
 def Generate():
-    global frameCount
+    global frameCount,spawnMet
 
-    frameCount += 1
     if frameCount == spawnResult:
+        tres = int (np.random.uniform(0.0, spawnDif)*maxFrames) 
+        #print(tres+spawnResult)
+        spawnMet = spawnResult 
+         
+    if spawnMet == frameCount:
         frameCount = 0
 
+    allMeteors.append(m.Meteor(0, np.random.uniform(1.0, 2.0), 0, screenSize_x))
+
+    frameCount += 1
+
 def main():
-    global spawnRate, spawnDif, spawnResult
+    global allMeteors
+
+    allMeteors = []
+
+    global spawnRate, spawnDif, spawnResult, spawnMet
+
+    spawnMet = 0
+    
+    # por segundo.
+    spawnRate = 0.4
+    spawnDif = 0.1
+
+    spawnResult = int(spawnRate*maxFrames)
 
     gameStatus = 1
     gameExit = False
 
-    Cannon = v.Cannon(screenSize_x, screenSize_y)
-    bg = v.bg()
     dg = 0
 
-    # segundos.
-    spawnRate = 0.2 
-    # spawnRate dif en ms
-
-    # spawnResult 4 Generate()
-    spawnResult = int(spawnRate*maxFrames)
+    Cannon = v.Cannon(screenSize_x, screenSize_y)
+    bg = v.bg()
 
     while not gameExit:
 
@@ -67,14 +81,22 @@ def main():
         #if pkey[p.K_UP]:
         #    Cannon.ypos-=1.0
 
-        ## Mostrar assets.
-            
+        ## 
+
+        ## Mostrar assets generales.        
+
         bg.Draw(win)
         Cannon.Draw(win,dg)
         v.showFps(win,clock)
 
         # Generar meteoros. 
         Generate()
+
+        # Loop meteoros.
+        for met in m.Meteor.getMeteors():
+
+            met.UpdatePos()
+            met.Draw(win, 0)
 
         clock.tick(maxFrames) # setFrameRate
         p.display.flip() # update-screen
