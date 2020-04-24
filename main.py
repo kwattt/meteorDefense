@@ -20,12 +20,20 @@ class Settings:
     win = None
     clock = None
 
-    currentFrame = 0
+    currentFrame_meteor = 0
+    currentFrame_object = 0
+
+    object_spawnFrame = 500
+    object_frameResult = 40
 
     maxFrames = 60
     Vel = 0
     spawnFrame = 200
     frameResult = 120
+    cFrames = 5
+
+    object_spawnRate = 6
+    object_spawnDif = 12
 
     meteor_spawnRate = 0.55 # Meteors / seg
     meteor_spawnDif = 0.15 # Meteor random spawn delay
@@ -41,20 +49,38 @@ def initial_config():
     game.win = p.display.set_mode((game.screenX, game.screenY))
     game.clock = p.time.Clock()
 
-def Generate():
-    cFrames = game.clock.get_fps()
-    if cFrames == 0:
+def GenerateObject():
+
+    if game.currentFrame_object == game.object_frameResult:
+        game.object_spawnFrame = game.object_frameResult + \
+            int(np.random.uniform(0.0, game.object_spawnDif) * game.cFrames)
+        print(game.object_spawnFrame)
+
+    if game.object_spawnFrame == game.currentFrame_object:
+        game.currentFrame_object = 0
+        print("objeto spawneado")
+
+        allObjects.append(o.Object(0, \
+            game.Vel*(1.8), game.screenX, game.screenY))
+
+        game.object_frameResult = int(game.cFrames*game.object_spawnRate)
+
+    game.currentFrame_object += 1
+
+def GenerateMeteor():
+
+    game.cFrames = game.clock.get_fps()
+    if game.cFrames == 0:
         game.Vel = 1/(120*1.8/120)
     else:
-        game.Vel = 1/(cFrames*1.8/120)
+        game.Vel = 1/(game.cFrames*1.8/120)
 
-    if game.currentFrame == game.frameResult:
-
+    if game.currentFrame_meteor == game.frameResult:
         game.spawnFrame = game.frameResult + \
-            int(np.random.uniform(0.0, game.meteor_spawnDif) * cFrames)
+            int(np.random.uniform(0.0, game.meteor_spawnDif) * game.cFrames)
 
-    if game.spawnFrame == game.currentFrame:
-        game.currentFrame = 0
+    if game.spawnFrame == game.currentFrame_meteor:
+        game.currentFrame_meteor = 0
         sel = 0
         bspeed = 0
         if game.gameStatus == 1:
@@ -67,9 +93,10 @@ def Generate():
         allMeteors.append(m.Meteor(sel, \
             game.Vel*(np.random.uniform(2.0, 4.4-bspeed)), game.screenX))
 
-        game.frameResult = int(cFrames*game.meteor_spawnRate)
+        game.frameResult = int(game.cFrames*game.meteor_spawnRate)
+        print(game.currentFrame_object)
 
-    game.currentFrame += 1
+    game.currentFrame_meteor += 1
 
 def checkHealth():
 
@@ -79,6 +106,7 @@ def checkHealth():
 def clearObjects():
     allProjectiles.clear()
     allMeteors.clear()
+    allObjects.clear()
 
 def gameMode1():
     game.frameResult = int(game.maxFrames*game.meteor_spawnRate)
@@ -87,6 +115,7 @@ def gameMode1():
     Cannon = v.Cannon(game.screenY)
     bg = v.bg()
     mt = v.Mountain(game.screenX, game.screenY)
+    sky = v.sky(game.screenY, game.screenY)
     game.healthPoints = 100
     clearObjects()
 
@@ -110,7 +139,20 @@ def gameMode1():
         game.clock.tick(game.maxFrames)
 
         # Generar meteoros
-        Generate()
+        GenerateMeteor()
+
+        # Generar Objetos
+        GenerateObject()
+
+        # Loop Objetos
+
+        for ob in o.Object.getObjects():
+            ob.Draw(game.win, hitbox=True)
+            ob.UpdatePos()
+
+            if ob.pos[1]-ob.hitbox[3]/2 < sky.hitbox[1]:
+                allObjects.remove(ob)
+                del ob
 
         # Loop Projectiles.
 
@@ -120,6 +162,8 @@ def gameMode1():
             if pr.kme:
                 allProjectiles.remove(pr)
                 del pr
+
+        sky.Draw(game.win)
 
         # Loop meteoros.
         for met in m.Meteor.getMeteors():
@@ -152,9 +196,9 @@ def gameMode1():
                 allMeteors.remove(met)
                 del met
 
-                checkHealth()
+                #checkHealth()
 
-        v.showFps(game.win, game.clock)
+        v.showFps(game.win, game.cFrames)
 
         p.display.flip()
 
@@ -163,8 +207,6 @@ def gameMode1():
 
 def game_menu():
     mousePos = (0, 0)
-
-    m1 = o.Object(0, 0.2, game.screenX, game.screenY)
 
     while game.gameStatus != -1:
         game.gameStatus = 0
@@ -178,11 +220,7 @@ def game_menu():
             elif e.type == p.MOUSEBUTTONDOWN:
                 mousePos = p.mouse.get_pos()
 
-
-
         game.win.fill((0, 0, 0))
-        m1.UpdatePos()
-        m1.Draw(game.win, hitbox=True)
 
         playText = p.font.SysFont("Ubuntu", 15).render(str("Jugar"), \
             True, p.Color("goldenrod"))
@@ -211,6 +249,7 @@ game = Settings()
 
 allMeteors = []
 allProjectiles = []
+allObjects = []
 
 # Establecer configuración
 

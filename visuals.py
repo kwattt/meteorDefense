@@ -2,6 +2,15 @@ import weakref
 import numpy as np
 import pygame as p
 
+class sky():
+    def __init__(self, xsize, ysize):
+        self.xsize = xsize
+        self.ysize = ysize
+        self.hitbox = (0, -30, xsize, 20)
+
+    def Draw(self, win):
+        p.draw.rect(win, (255, 0, 0), self.hitbox)
+
 class Mountain():
     def __init__(self, xsize, ysize):
         self.xsize = xsize
@@ -51,7 +60,6 @@ class Cannon:
         self.sprite_rect.center = (self.xpos, self.ypos)
         win.blit(self.sprite, self.sprite_rect)
 
-
 class Proyectile:
     ptiles = weakref.WeakSet()
     def __init__(self, oxpos, oypos, txpos, typos, angle):
@@ -92,7 +100,7 @@ class Proyectile:
     def getProjectiles(cls):
         return cls.ptiles
 
-def showFps(win, clock):
+def showFps(win, frames):
     fps_overlay = \
-        p.font.SysFont("Verdana", 15).render(str(clock.get_fps()), True, p.Color("goldenrod"))
+        p.font.SysFont("Verdana", 15).render(str(frames), True, p.Color("goldenrod"))
     win.blit(fps_overlay, (0, 0))
