@@ -40,6 +40,8 @@ class Settings:
 
     healthPoints = 100
 
+    misilEffect = False
+
 def initial_config():
     p.init()
 
@@ -61,8 +63,7 @@ def GenerateObject():
             game.Vel*(1.8), game.screenX, game.screenY))
 
         game.object_frameResult = int(game.cFrames*game.object_spawnRate)
-        game.object_spawnFrame=10000
-
+        game.object_spawnFrame = 10000
     game.currentFrame_object += 1
 
 def GenerateMeteor():
@@ -147,11 +148,25 @@ def gameMode1():
             ob.Draw(game.win, hitbox=True)
             ob.UpdatePos()
 
-            if ob.pos[1]-ob.hitbox[3]/2 < sky.hitbox[1]:
+            if ob.pos[1]-ob.hitbox[3]/2 < sky.hitbox[1]: # Sky hitbox
                 allObjects.remove(ob)
                 del ob
+                continue
 
-        # Loop Projectiles.
+            if mousePos[0] > 0:
+                if mousePos[0] < ob.pos[0]+ ob.hitbox[2]/2 \
+                    and mousePos[0] > ob.pos[0]- ob.hitbox[2]/2:
+
+                    if mousePos[1] < ob.pos[1]+ ob.hitbox[3]/2 \
+                        and mousePos[1] > ob.pos[1]- ob.hitbox[3]/2:
+
+                        game.misilEffect = True
+
+                        allObjects.remove(ob)
+                        del ob
+                        continue
+
+        # Loop Projectiles
 
         for pr in v.Proyectile.getProjectiles():
             pr.Draw(game.win)
@@ -166,6 +181,11 @@ def gameMode1():
         for met in m.Meteor.getMeteors():
             met.UpdatePos()
             met.Draw(game.win, hitbox=False)
+
+            if game.misilEffect:
+                allMeteors.remove(met)
+                del met
+                continue
 
             if mousePos[0] > 0:
                 if mousePos[0] < met.pos[0]+ met.hitbox[2]/2 \
@@ -194,6 +214,8 @@ def gameMode1():
                 del met
 
                 #checkHealth()
+
+        game.misilEffect = False
 
         v.showFps(game.win, game.cFrames)
 
