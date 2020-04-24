@@ -49,12 +49,13 @@ def Generate():
         return
 
     cFrames = game.clock.get_fps()
-
     if cFrames == 0:
         game.Vel = 1/(120*2.0/120)
     else:
         game.Vel = 1/(cFrames*2.0/120)
 
+
+    game.frameResult = game.maxFrames*game.meteor_spawnRate
     if game.currentFrame == game.frameResult:
         game.spawnFrame = game.frameResult + \
             int(np.random.uniform(0.0, game.meteor_spawnDif)*game.maxFrames)
@@ -74,57 +75,6 @@ def Generate():
             game.Vel*(np.random.uniform(2.0, 4.4-bspeed)), game.screenX))
 
     game.currentFrame += 1
-
-#gameInit
-
-# Load Settings
-game = Settings()
-
-allMeteors = []
-allProjectiles = []
-
-# Establecer configuración
-
-initial_config()
-
-# Ir al menú
-
-def game_menu():
-    mousePos = (0, 0)
-
-    while game.gameStatus != -1:
-        game.gameStatus = 0
-
-        # Menú improvisado
-
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                game.gameStatus = -1
-
-            elif e.type == p.MOUSEBUTTONDOWN:
-                mousePos = p.mouse.get_pos()
-
-        playText = p.font.SysFont("Ubuntu", 15).render(str("Jugar"), \
-            True, p.Color("goldenrod"))
-
-        rectHb = (game.screenX/2 - 50, game.screenY/2, 100, 100)
-        p.draw.rect(game.win, (255, 255, 255), rectHb)
-        game.win.blit(playText, ((game.screenX/2 - 50), game.screenY/2))
-
-        if mousePos[0] < rectHb[0] + rectHb[2]/2 and mousePos[0] > rectHb[0] - rectHb[2]/2:
-            if mousePos[1] < rectHb[1] + rectHb[3]/2 and mousePos[1] > rectHb[1] - rectHb[3]/2:
-
-                game.gameStatus = 1
-
-        mousePos = (0, 0)
-
-        p.display.flip()
-
-        if game.gameStatus == 1:
-            # ir a func del modo
-            gameMode1()
-
-game_menu()
 
 def checkHealth():
 
@@ -147,7 +97,7 @@ def gameMode1():
                 game.gameStatus = -1
 
             elif e.type == p.MOUSEBUTTONDOWN:
-                mPos = p.mouse.get_pos()
+                mousePos = p.mouse.get_pos()
 
         # Assets generales.
 
@@ -175,7 +125,7 @@ def gameMode1():
             met.UpdatePos()
             met.Draw(game.win, hitbox=False)
 
-            if mPos[0] > 0:
+            if mousePos[0] > 0:
                 mx, my = mousePos
                 x, y = met.pos
                 if mx < x + met.hitbox[2]/2 and mx > x - met.hitbox[2]/2:
@@ -196,7 +146,7 @@ def gameMode1():
 
             #coll mountain
             if met.pos[1]+met.hitbox[3]/2 > mt.hitbox[1]:
-#                healthPoints -= met.damage
+                game.healthPoints -= met.damage
                 allMeteors.remove(met)
                 del met
 
@@ -208,3 +158,56 @@ def gameMode1():
 
         if game.gameStatus == 200:
             print("Perdiste!")
+
+def game_menu():
+    mousePos = (0, 0)
+
+    while game.gameStatus != -1:
+        game.gameStatus = 0
+
+        # Menú improvisado
+
+        for e in p.event.get():
+            if e.type == p.QUIT:
+                game.gameStatus = -1
+
+            elif e.type == p.MOUSEBUTTONDOWN:
+                mousePos = p.mouse.get_pos()
+
+        game.win.fill((0,0,0))
+        playText = p.font.SysFont("Ubuntu", 15).render(str("Jugar"), \
+            True, p.Color("goldenrod"))
+
+        rectHb = (game.screenX/2 - 50, game.screenY/2, 100, 100)
+        p.draw.rect(game.win, (255, 255, 255), rectHb)
+        game.win.blit(playText, ((game.screenX/2 - 50), game.screenY/2))
+
+        if mousePos[0] < rectHb[0] + rectHb[2]/2 and mousePos[0] > rectHb[0] - rectHb[2]/2:
+            if mousePos[1] < rectHb[1] + rectHb[3]/2 and mousePos[1] > rectHb[1] - rectHb[3]/2:
+
+                game.gameStatus = 1
+
+        mousePos = (0, 0)
+
+        p.display.flip()
+
+        if game.gameStatus == 1:
+            # ir a func del modo
+            gameMode1()
+
+
+#gameInit
+
+# Load Settings
+game = Settings()
+
+allMeteors = []
+allProjectiles = []
+
+# Establecer configuración
+
+initial_config()
+
+# Ir al menú
+
+game_menu()
