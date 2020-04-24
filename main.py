@@ -2,6 +2,7 @@ import pygame as p
 import numpy as np
 import meteors as m
 import visuals as v
+import objects as o
 #from pypresence import Presence
 #client_id = '702792332201820251'
 #   RPC = Presence(client_id)  # Initialize the client class
@@ -23,8 +24,8 @@ class Settings:
 
     maxFrames = 60
     Vel = 0
-    spawnFrame = 0
-    frameResult = 0
+    spawnFrame = 200
+    frameResult = 120
 
     meteor_spawnRate = 0.55 # Meteors / seg
     meteor_spawnDif = 0.15 # Meteor random spawn delay
@@ -34,31 +35,23 @@ class Settings:
 def initial_config():
     p.init()
 
-    game.spawnFrame = 0
     game.meteor_spawnRate = 0.55
     game.meteor_spawnDif = 0.12
-
-    # Inicio de partida se establecen los frames % spawn < También al cambiar FPS.
-    game.spawnFrame = int(game.meteor_spawnRate*game.maxFrames)
 
     game.win = p.display.set_mode((game.screenX, game.screenY))
     game.clock = p.time.Clock()
 
 def Generate():
-    if game.gameStatus == 200:
-        return
-
     cFrames = game.clock.get_fps()
     if cFrames == 0:
-        game.Vel = 1/(120*2.0/120)
+        game.Vel = 1/(120*1.8/120)
     else:
-        game.Vel = 1/(cFrames*2.0/120)
+        game.Vel = 1/(cFrames*1.8/120)
 
-
-    game.frameResult = game.maxFrames*game.meteor_spawnRate
     if game.currentFrame == game.frameResult:
+
         game.spawnFrame = game.frameResult + \
-            int(np.random.uniform(0.0, game.meteor_spawnDif)*game.maxFrames)
+            int(np.random.uniform(0.0, game.meteor_spawnDif) * cFrames)
 
     if game.spawnFrame == game.currentFrame:
         game.currentFrame = 0
@@ -74,6 +67,8 @@ def Generate():
         allMeteors.append(m.Meteor(sel, \
             game.Vel*(np.random.uniform(2.0, 4.4-bspeed)), game.screenX))
 
+        game.frameResult = int(cFrames*game.meteor_spawnRate)
+
     game.currentFrame += 1
 
 def checkHealth():
@@ -81,13 +76,19 @@ def checkHealth():
     if game.healthPoints <= 0:
         game.gameStatus = 200
 
+def clearObjects():
+    allProjectiles.clear()
+    allMeteors.clear()
+
 def gameMode1():
+    game.frameResult = int(game.maxFrames*game.meteor_spawnRate)
 
     cannonDegrees = 0
     Cannon = v.Cannon(game.screenY)
     bg = v.bg()
     mt = v.Mountain(game.screenX, game.screenY)
     game.healthPoints = 100
+    clearObjects()
 
     while game.gameStatus == 1:
         mousePos = (0, 0)
@@ -114,7 +115,7 @@ def gameMode1():
         # Loop Projectiles.
 
         for pr in v.Proyectile.getProjectiles():
-            pr.Draw(game.win, cannonDegrees)
+            pr.Draw(game.win)
             pr.UpdatePos()
             if pr.kme:
                 allProjectiles.remove(pr)
@@ -126,10 +127,11 @@ def gameMode1():
             met.Draw(game.win, hitbox=False)
 
             if mousePos[0] > 0:
-                mx, my = mousePos
-                x, y = met.pos
-                if mx < x + met.hitbox[2]/2 and mx > x - met.hitbox[2]/2:
-                    if my < y + met.hitbox[3]/2 and my > y - met.hitbox[3]/2:
+                if mousePos[0] < met.pos[0]+ met.hitbox[2]/2 \
+                    and mousePos[0] > met.pos[0]- met.hitbox[2]/2:
+
+                    if mousePos[1] < met.pos[1]+ met.hitbox[3]/2 \
+                        and mousePos[1] > met.pos[1]- met.hitbox[3]/2:
 
                         shootPos = (Cannon.xpos-(float(Cannon.size[1]/2 + 1.0) \
                             * np.cos(np.radians(-1.0 * cannonDegrees -90))), \
@@ -162,6 +164,8 @@ def gameMode1():
 def game_menu():
     mousePos = (0, 0)
 
+    m1 = o.Object(0, 0.2, game.screenX, game.screenY)
+
     while game.gameStatus != -1:
         game.gameStatus = 0
 
@@ -174,7 +178,12 @@ def game_menu():
             elif e.type == p.MOUSEBUTTONDOWN:
                 mousePos = p.mouse.get_pos()
 
-        game.win.fill((0,0,0))
+
+
+        game.win.fill((0, 0, 0))
+        m1.UpdatePos()
+        m1.Draw(game.win, hitbox=True)
+
         playText = p.font.SysFont("Ubuntu", 15).render(str("Jugar"), \
             True, p.Color("goldenrod"))
 
@@ -194,7 +203,6 @@ def game_menu():
         if game.gameStatus == 1:
             # ir a func del modo
             gameMode1()
-
 
 #gameInit
 

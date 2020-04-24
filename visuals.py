@@ -8,7 +8,7 @@ class Mountain():
         self.ysize = ysize
         self.bg = p.image.load('vfx/sprites/mountain.png')
         self.cann = p.transform.scale(self.bg, (xsize, 150))
-        self.hitbox = (0, ysize-115 ,xsize, 20)
+        self.hitbox = (0, ysize-115, xsize, 20)
 
     def Draw(self, win):
         win.blit(self.cann, (0, self.ysize-150))
@@ -18,7 +18,7 @@ class bg():
     def __init__(self):
         self.bgg = p.image.load('vfx/background/space.jpg').convert()
     def Draw(self, win):
-        win.blit(self.bgg, (0,0))
+        win.blit(self.bgg, (0, 0))
 
 class Cannon:
     def __init__(self, screenSize_y):
@@ -66,7 +66,6 @@ class Proyectile:
         self.sprite = p.image.load('vfx/sprites/proyectile.png')
         self.cann = p.transform.scale(self.sprite, self.size)
         self.sprite_rect = None
-        self.last_angle = None
 
         self.kme = False
 
@@ -75,16 +74,15 @@ class Proyectile:
     def UpdatePos(self):
         vel = 69.0
 
-        self.xpos, self.ypos = (self.xpos-(vel*np.cos(np.radians(-1.0*self.last_angle-90))), \
-                self.ypos-(vel*np.sin(np.radians(-1.0*self.last_angle-90))))
+        self.xpos, self.ypos = (self.xpos-(vel*np.cos(np.radians(-1.0*self.angle-90))), \
+                self.ypos-(vel*np.sin(np.radians(-1.0*self.angle-90))))
 
         if self.xpos < self.tposx+70/2 and self.xpos > self.tposx-70/2:
             if self.ypos < self.tposy+70/2 and self.ypos > self.tposy-70/2:
                 self.kme = True
 
-    def Draw(self, win, angle):
-        self.sprite = p.transform.rotate(self.cann, angle+180%360)
-        self.last_angle = angle%360
+    def Draw(self, win):
+        self.sprite = p.transform.rotate(self.cann, self.angle+180%360)
         self.sprite_rect = self.sprite.get_rect()
 
         self.sprite_rect.center = (self.xpos, self.ypos)
