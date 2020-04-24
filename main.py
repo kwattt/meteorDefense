@@ -32,7 +32,7 @@ class Settings:
     frameResult = 120
     cFrames = 5
 
-    object_spawnRate = 6
+    object_spawnRate = 10
     object_spawnDif = 12
 
     meteor_spawnRate = 0.55 # Meteors / seg
@@ -54,16 +54,14 @@ def GenerateObject():
     if game.currentFrame_object == game.object_frameResult:
         game.object_spawnFrame = game.object_frameResult + \
             int(np.random.uniform(0.0, game.object_spawnDif) * game.cFrames)
-        print(game.object_spawnFrame)
 
     if game.object_spawnFrame == game.currentFrame_object:
         game.currentFrame_object = 0
-        print("objeto spawneado")
-
         allObjects.append(o.Object(0, \
             game.Vel*(1.8), game.screenX, game.screenY))
 
         game.object_frameResult = int(game.cFrames*game.object_spawnRate)
+        game.object_spawnFrame=10000
 
     game.currentFrame_object += 1
 
@@ -94,7 +92,6 @@ def GenerateMeteor():
             game.Vel*(np.random.uniform(2.0, 4.4-bspeed)), game.screenX))
 
         game.frameResult = int(game.cFrames*game.meteor_spawnRate)
-        print(game.currentFrame_object)
 
     game.currentFrame_meteor += 1
 
