@@ -1,5 +1,6 @@
-import pygame as p 
+import weakref
 import numpy as np
+import pygame as p
 
 class Mountain():
     def __init__(self, xsize, ysize):
@@ -24,9 +25,12 @@ class Cannon:
         self.xpos = 20
         self.ypos = screenSize_y-50
 
+        self.size = (10, 70)
+
         self.sprite = p.image.load('vfx/sprites/cannon.png')
-        self.cann = p.transform.scale(self.sprite, (10, 70))
+        self.cann = p.transform.scale(self.sprite, self.size)
         self.sprite_rect = None
+        self.last_angle = None
 
     def AngleToMouse(self, screenSize_y):
         mpos = np.array(p.mouse.get_pos())
@@ -41,10 +45,54 @@ class Cannon:
 
     def Draw(self, win, angle):
         self.sprite = p.transform.rotate(self.cann, angle%360)
+        self.last_angle = angle%360
         self.sprite_rect = self.sprite.get_rect()
 
         self.sprite_rect.center = (self.xpos, self.ypos)
         win.blit(self.sprite, self.sprite_rect)
+
+
+class Proyectile:
+    ptiles = weakref.WeakSet()
+    def __init__(self, oxpos, oypos, txpos, typos, angle):
+        self.xpos = oxpos
+        self.ypos = oypos
+        self.angle = angle
+
+        self.size = (15, 25)
+        self.tposx = txpos
+        self.tposy = typos
+
+        self.sprite = p.image.load('vfx/sprites/proyectile.png')
+        self.cann = p.transform.scale(self.sprite, self.size)
+        self.sprite_rect = None
+        self.last_angle = None
+
+        self.kme = False
+
+        self.__class__.ptiles.add(self)
+
+    def UpdatePos(self):
+        vel = 69.0
+
+        self.xpos, self.ypos = (self.xpos-(vel*np.cos(np.radians(-1.0*self.last_angle-90))), \
+                self.ypos-(vel*np.sin(np.radians(-1.0*self.last_angle-90))))
+
+        if self.xpos < self.tposx+70/2 and self.xpos > self.tposx-70/2:
+            if self.ypos < self.tposy+70/2 and self.ypos > self.tposy-70/2:
+                self.kme = True
+
+    def Draw(self, win, angle):
+        self.sprite = p.transform.rotate(self.cann, angle+180%360)
+        self.last_angle = angle%360
+        self.sprite_rect = self.sprite.get_rect()
+
+        self.sprite_rect.center = (self.xpos, self.ypos)
+        win.blit(self.sprite, self.sprite_rect)
+
+    @classmethod
+    def getProjectiles(cls):
+        return cls.ptiles
 
 def showFps(win, clock):
     fps_overlay = \

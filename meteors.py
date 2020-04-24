@@ -11,12 +11,12 @@ class Meteor:
         self.damage = 10
 
         if self.type == 0:
-            self.mSize = 70
+            self.mSize = 75
             self.damage = 10
             self.sprite = p.image.load("vfx/sprites/meteor1.png")
         elif self.type == 1:
             self.damage = 5
-            self.mSize = 45
+            self.mSize = 50
             self.sprite = p.image.load("vfx/sprites/meteor2.png")
 
         self.vel = vel
