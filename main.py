@@ -3,15 +3,16 @@ import numpy as np
 import meteors as m
 import visuals as v
 import objects as o
-#from pypresence import Presence
-#client_id = '702792332201820251'
+# from pypresence import Presence
+# client_id = '702792332201820251'
 #   RPC = Presence(client_id)  # Initialize the client class
 #    RPC.connect()
 #    print(RPC.update(state="Test", \
 #        details="Test2!"))  # Set the presence
 
+
 class Settings:
-    #default Settings
+    # default Settings
 
     screenX = 400
     screenY = 600
@@ -35,12 +36,13 @@ class Settings:
     object_spawnRate = 10
     object_spawnDif = 12
 
-    meteor_spawnRate = 0.55 # Meteors / seg
-    meteor_spawnDif = 0.15 # Meteor random spawn delay
+    meteor_spawnRate = 0.55  # Meteors / seg
+    meteor_spawnDif = 0.15  # Meteor random spawn delay
 
     healthPoints = 100
 
     misilEffect = False
+
 
 def initial_config():
     p.init()
@@ -51,6 +53,7 @@ def initial_config():
     game.win = p.display.set_mode((game.screenX, game.screenY))
     game.clock = p.time.Clock()
 
+
 def GenerateObject():
 
     if game.currentFrame_object == game.object_frameResult:
@@ -59,12 +62,13 @@ def GenerateObject():
 
     if game.object_spawnFrame == game.currentFrame_object:
         game.currentFrame_object = 0
-        allObjects.append(o.Object(0, \
-            game.Vel*(1.8), game.screenX, game.screenY))
+        allObjects.append( 
+            o.Object(0, game.Vel*(1.8), game.screenX, game.screenY))
 
         game.object_frameResult = int(game.cFrames*game.object_spawnRate)
         game.object_spawnFrame = 10000
     game.currentFrame_object += 1
+
 
 def GenerateMeteor():
 
@@ -89,22 +93,25 @@ def GenerateMeteor():
             else:
                 sel = 0
 
-        allMeteors.append(m.Meteor(sel, \
-            game.Vel*(np.random.uniform(2.0, 4.4-bspeed)), game.screenX))
+        allMeteors.append(m.Meteor(
+            sel, game.Vel*(np.random.uniform(2.0, 4.4-bspeed)), game.screenX))
 
         game.frameResult = int(game.cFrames*game.meteor_spawnRate)
 
     game.currentFrame_meteor += 1
+
 
 def checkHealth():
 
     if game.healthPoints <= 0:
         game.gameStatus = 200
 
+
 def clearObjects():
     allProjectiles.clear()
     allMeteors.clear()
     allObjects.clear()
+
 
 def gameMode1():
     game.frameResult = int(game.maxFrames*game.meteor_spawnRate)
@@ -148,17 +155,17 @@ def gameMode1():
             ob.Draw(game.win, hitbox=True)
             ob.UpdatePos()
 
-            if ob.pos[1]-ob.hitbox[3]/2 < sky.hitbox[1]: # Sky hitbox
+            if ob.pos[1]-ob.hitbox[3]/2 < sky.hitbox[1]:  # Sky hitbox
                 allObjects.remove(ob)
                 del ob
                 continue
 
             if mousePos[0] > 0:
-                if mousePos[0] < ob.pos[0]+ ob.hitbox[2]/2 \
-                    and mousePos[0] > ob.pos[0]- ob.hitbox[2]/2:
+                if mousePos[0] < ob.pos[0] + ob.hitbox[2]/2 \
+                  and mousePos[0] > ob.pos[0] - ob.hitbox[2]/2:
 
-                    if mousePos[1] < ob.pos[1]+ ob.hitbox[3]/2 \
-                        and mousePos[1] > ob.pos[1]- ob.hitbox[3]/2:
+                    if mousePos[1] < ob.pos[1] + ob.hitbox[3]/2 \
+                      and mousePos[1] > ob.pos[1] - ob.hitbox[3]/2:
 
                         game.misilEffect = True
 
@@ -188,32 +195,40 @@ def gameMode1():
                 continue
 
             if mousePos[0] > 0:
-                if mousePos[0] < met.pos[0]+ met.hitbox[2]/2 \
-                    and mousePos[0] > met.pos[0]- met.hitbox[2]/2:
+                if mousePos[0] < met.pos[0] + met.hitbox[2]/2 \
+                  and mousePos[0] > met.pos[0] - met.hitbox[2]/2:
 
-                    if mousePos[1] < met.pos[1]+ met.hitbox[3]/2 \
-                        and mousePos[1] > met.pos[1]- met.hitbox[3]/2:
+                    if mousePos[1] < met.pos[1] + met.hitbox[3]/2 \
+                      and mousePos[1] > met.pos[1] - met.hitbox[3]/2:
 
-                        shootPos = (Cannon.xpos-(float(Cannon.size[1]/2 + 1.0) \
-                            * np.cos(np.radians(-1.0 * cannonDegrees -90))), \
-                            Cannon.ypos-(float(Cannon.size[1]/2 + 1.0) \
-                            * np.sin(np.radians(-1.0* cannonDegrees - 90))))
+                        shootPos = (
+                            Cannon.xpos-(
+                              float(Cannon.size[1]/2 + 1.0)
+                              * np.cos(np.radians(-1.0 * cannonDegrees - 90))),
+                            Cannon.ypos-(
+                              float(Cannon.size[1]/2 + 1.0)
+                              * np.sin(np.radians(-1.0 * cannonDegrees - 90)))
+                        )
 
                         cannonDegrees = Cannon.AngleToMouse(game.screenY)
-                        allProjectiles.append(v.Proyectile(shootPos[0], shootPos[1], \
-                            met.pos[0], met.pos[1], cannonDegrees))
+                        allProjectiles.append(
+                          v.Proyectile(
+                            shootPos[0], shootPos[1], met.pos[0], met.pos[1],
+                            cannonDegrees
+                          )
+                        )
 
                         allMeteors.remove(met)
                         del met
                         continue
 
-            #coll mountain
+            # coll mountain
             if met.pos[1]+met.hitbox[3]/2 > mt.hitbox[1]:
                 game.healthPoints -= met.damage
                 allMeteors.remove(met)
                 del met
 
-                #checkHealth()
+                # checkHealth()
 
         game.misilEffect = False
 
@@ -223,6 +238,7 @@ def gameMode1():
 
         if game.gameStatus == 200:
             print("Perdiste!")
+
 
 def game_menu():
     mousePos = (0, 0)
@@ -241,15 +257,19 @@ def game_menu():
 
         game.win.fill((0, 0, 0))
 
-        playText = p.font.SysFont("Ubuntu", 15).render(str("Jugar"), \
-            True, p.Color("goldenrod"))
+        playText = p.font.SysFont("Ubuntu", 15).render(
+          str("Jugar"),
+          True, p.Color("goldenrod")
+        )
 
         rectHb = (game.screenX/2 - 50, game.screenY/2, 100, 100)
         p.draw.rect(game.win, (255, 255, 255), rectHb)
         game.win.blit(playText, ((game.screenX/2 - 50), game.screenY/2))
 
-        if mousePos[0] < rectHb[0] + rectHb[2]/2 and mousePos[0] > rectHb[0] - rectHb[2]/2:
-            if mousePos[1] < rectHb[1] + rectHb[3]/2 and mousePos[1] > rectHb[1] - rectHb[3]/2:
+        if mousePos[0] < rectHb[0] + rectHb[2]/2 and \
+                mousePos[0] > rectHb[0] - rectHb[2]/2:
+            if mousePos[1] < rectHb[1] + rectHb[3]/2 and \
+                    mousePos[1] > rectHb[1] - rectHb[3]/2:
 
                 game.gameStatus = 1
 
@@ -261,9 +281,11 @@ def game_menu():
             # ir a func del modo
             gameMode1()
 
-#gameInit
+# gameInit
 
 # Load Settings
+
+
 game = Settings()
 
 allMeteors = []
