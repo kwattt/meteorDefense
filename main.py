@@ -4,7 +4,6 @@ import meteors as m
 import visuals as v
 import objects as o
 # from pypresence import Presence
-# client_id = '702792332201820251'
 #   RPC = Presence(client_id)  # Initialize the client class
 #    RPC.connect()
 #    print(RPC.update(state="Test", \
